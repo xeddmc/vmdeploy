@@ -4,7 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/niemal/uman"
 	"net/http"
+	"os"
 )
+
+func css(c *gin.Context) {
+	path := "web/css/" + c.Param("filename")
+
+	if _, err := os.Stat(path); err == nil {
+		c.Status(200)
+		c.Header("Content-Type", "text/css")
+		c.File(path)
+	} else {
+		c.String(404, "404 Not Found")
+	}
+}
 
 func home(c *gin.Context, um *uman.UserManager, s *uman.Session) {
 	if s.IsLogged() {
@@ -18,7 +31,7 @@ func home(c *gin.Context, um *uman.UserManager, s *uman.Session) {
 
 func logout(c *gin.Context, um *uman.UserManager, s *uman.Session) {
 	s.Logout()
-	http.Redirect(c.Writer, c.Request, "/", 302)
+	c.Redirect(302, "/")
 }
 
 func login(c *gin.Context, um *uman.UserManager, s *uman.Session) {
@@ -32,10 +45,14 @@ func login(c *gin.Context, um *uman.UserManager, s *uman.Session) {
 		}
 	}
 
-	http.Redirect(c.Writer, c.Request, "/", 302)
+	c.Redirect(302, "/")
 }
 
 func (w *Web) routes() {
+	w.engine.GET("/css/:filename", func(c *gin.Context) {
+		css(c)
+	})
+
 	w.engine.GET("/", func(c *gin.Context) {
 		home(c, w.um, w.um.GetHTTPSession(c.Writer, c.Request))
 	})
