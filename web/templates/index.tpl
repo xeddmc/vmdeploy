@@ -1,18 +1,16 @@
 {{ define "index.tpl" }}
 <!DOCTYPE html><html>
 <head>
-	{{ if .logged }}
-	<title>Cute</title>
-	{{ else }}
 	<title>Gotta login</title>
-	{{ end }}
 </head>
 
 <body>
-	{{ if .logged }}
-	<p>WELCOME. YOU MAY <a href="/logout">LOGOUT</a>.</p>
-	{{ else }}
 	<p>This is the right way.</p>
+
+	{{ if .credError }}
+	<p>You have provided invalid credentials.</p>
+	{{ end }}
+
 	<form method="POST" action="/login">
 		<label for="user">Username</label>
 		<input type="text" name="user">
@@ -22,7 +20,6 @@
 
 		<input type="submit" value="Submit">
 	</form>
-	{{ end }}
 </body>
 </html>
 {{ end }}

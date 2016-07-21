@@ -25,8 +25,6 @@ func New() *Web {
 }
 
 func (w *Web) Run() {
-	w.Home()
-	w.LogHandler()
-
+	w.routes()
 	w.engine.Run(":" + w.port)
 }
