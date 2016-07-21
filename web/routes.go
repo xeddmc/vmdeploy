@@ -7,10 +7,6 @@ import (
 )
 
 func home(c *gin.Context, um *uman.UserManager, s *uman.Session) {
-	if s == nil {
-		s = um.GetHTTPSession(c.Writer, c.Request)
-	}
-	
 	if s.IsLogged() {
 		c.HTML(http.StatusOK, "dashboard.tpl", gin.H{
 			"username": s.User,
@@ -21,19 +17,11 @@ func home(c *gin.Context, um *uman.UserManager, s *uman.Session) {
 }
 
 func logout(c *gin.Context, um *uman.UserManager, s *uman.Session) {
-	if s == nil {
-		s = um.GetHTTPSession(c.Writer, c.Request)
-	}
-
 	s.Logout()
 	http.Redirect(c.Writer, c.Request, "/", 302)
 }
 
 func login(c *gin.Context, um *uman.UserManager, s *uman.Session) {
-	if s == nil {
-		s = um.GetHTTPSession(c.Writer, c.Request)
-	}
-
 	if !s.IsLogged() {
 		if !um.Login(c.PostForm("user"), c.PostForm("pass"), s) {
 			c.HTML(http.StatusOK, "index.tpl", gin.H{
@@ -49,14 +37,14 @@ func login(c *gin.Context, um *uman.UserManager, s *uman.Session) {
 
 func (w *Web) routes() {
 	w.engine.GET("/", func(c *gin.Context) {
-		home(c, w.um, nil)
+		home(c, w.um, w.um.GetHTTPSession(c.Writer, c.Request))
 	})
 
 	w.engine.GET("/logout", func(c *gin.Context) {
-		logout(c, w.um, nil)
+		logout(c, w.um, w.um.GetHTTPSession(c.Writer, c.Request))
 	})
 
 	w.engine.POST("/login", func(c *gin.Context) {
-		login(c, w.um, nil)
+		login(c, w.um, w.um.GetHTTPSession(c.Writer, c.Request))
 	})
 }
