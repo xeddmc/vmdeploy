@@ -2,6 +2,7 @@
 <!DOCTYPE html><html>
 <head>
 	<title>Gotta login</title>
+	<link rel="stylesheet" href="css/pure-min.css">
 </head>
 
 <body>
